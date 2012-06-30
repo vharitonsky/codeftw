@@ -13,6 +13,9 @@ Crafty.c("PlayerControls", {
         this.isAnimated = true
         this.direction = direction
         this.moved = true
+        if(this.x%20 != 0 || this.y%20 != 0)
+            return
+        console.log(this.x+':'+this.y)
         switch (direction) {
             case 'up':
                 this.tween({y : this.y - 20}, 5);
@@ -54,7 +57,6 @@ Crafty.c("Others", {
     init : function() {
         this.requires('Collision, Sprite, PlayerControls, Tween')
         .bind('TweenEnd', function() {
-            console.log('x  xx')
             this.isAnimated = false
             var event = this.pullEvent();
             if (event) {
@@ -68,13 +70,10 @@ Crafty.c("Others", {
     },
 
     pushEvent : function(event) {
-        console.log('push event');
-
         return this.queue.push(event);
     },
 
     pullEvent : function() {
-        console.log('pull event');
         return this.queue.shift();
     }
 });
@@ -125,7 +124,6 @@ Crafty.c("Player", {
         })
         .bind('TweenEnd', function() {
             if(this.moved){
-                console.log('tween end')
                 this.moved = false
                 this.game.firePlayerMoveEvent(this, this.direction);
             }
