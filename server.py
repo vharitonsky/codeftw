@@ -35,8 +35,8 @@ class EchoWebSocket(websocket.WebSocketHandler):
 application = tornado.web.Application([
     (r"/",MainHandler),
     (r"/websocket",EchoWebSocket),
-    (r"/media/(.*)",tornado.web.StaticFileHandler,{'path':'./media'}),
-],static_path = os.path.join(os.path.dirname(__file__),'media')
+    (r"/static/(.*)",tornado.web.StaticFileHandler,{'path':'./static'}),
+],static_path = os.path.join(os.path.dirname(__file__),'static')
  ,template_path = os.path.join(os.path.dirname(__file__),'templates')
  ,debug = True)
 
