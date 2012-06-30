@@ -26,13 +26,24 @@ Game.prototype.dispatchSocketEvent = function(event) {
     
     for (var i = 0; i < event.length; i++) {
         console.log(event[i]);
+        var cmd = event[i].cmd
+        var args = event[i].args
+        console.log(args)
         if (event[i].game) {
-            this[event[i].cmd].apply(this, event[i].args);
+            this[cmd].apply(this, event[i].args);
         } else {
-            console.log(this.players);
-
             if (event[i].player) {
-                this.players[event[i].player][event[i].cmd].apply(this.players[event[i].player], event[i].args);
+                var player =this.players[event[i].player]
+                if (cmd == 'move') {
+
+                    if(!player.isAnimated){
+                        player[cmd].apply(player,args)
+                    }else{
+                        player.pushEvent(event[i]);
+                    }
+                } else {
+                    this.players[event[i].player][event[i].cmd].apply(this.players[event[i].player], event[i].args);
+                }
             }
         }
     }
@@ -111,8 +122,11 @@ Game.prototype.create_others = function(name, x, y) {
 
         moving : null,
 
-        xspeed: this.options.user.speed,
-        yspeed: this.options.user.speed
+        //xspeed: this.options.user.speed,
+        //yspeed: this.options.user.speed,
+
+        queue : [                
+        ]
     });
     return this.players[name];
 }
