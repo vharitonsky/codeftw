@@ -126,8 +126,10 @@ Crafty.c("Player", {
         .bind('TweenEnd', function() {
             this.isAnimated = false
             if(this.moved){
-                this.game.firePlayerMoveEvent(this, this.direction);
+                console.log('tween end')
                 this.moved = false
+                this.game.firePlayerMoveEvent(this, this.direction);
+
             }
         });
         return this;
