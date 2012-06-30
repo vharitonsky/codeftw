@@ -5,46 +5,55 @@ DIRECTIONS[Crafty.keys.DOWN_ARROW]  = 'down';
 DIRECTIONS[Crafty.keys.LEFT_ARROW]  = 'left';
 DIRECTIONS[Crafty.keys.RIGHT_ARROW] = 'right';
 
+Crafty.c("Others", {
+    init : function() {
+        this.requires("Tween");
+    },
+
+    move : function(x, y, direction) {
+        switch (direction) {
+            case 'up':
+                this.tween({y : this.y - 10}, 25);
+                break;
+            case 'down':
+                this.tween({y : this.y + 10}, 25);
+                break;
+            case 'left':
+                this.tween({x : this.x - 10}, 25);
+                break;
+            case 'right':
+                this.tween({x : this.x + 10}, 25);
+                break;
+        }
+        return this;
+    }
+});
 
 Crafty.c("Player", {
     init : function() {
-        this.requires("Controls, Collision, Tween")
+        this.requires("Controls, Collision, Others")
         .bind('KeyDown', function(e) {
-            if (!this.move) {
+            if (!this.moving) {
                 switch (e.keyCode) {
                     case Crafty.keys.UP_ARROW:
                     case Crafty.keys.DOWN_ARROW:
                     case Crafty.keys.LEFT_ARROW:
                     case Crafty.keys.RIGHT_ARROW:
-                        this.move = DIRECTIONS[e.keyCode];
+                        this.moving = DIRECTIONS[e.keyCode];
                         break;
                 }
             }
         })
         .bind('KeyUp', function(e) {
-            this.move = null;
+            this.moving = null;
         })
         .bind('EnterFrame', function(e) {
-            if (this.move) {
-                switch (this.move) {
-                    case 'up':
-                        this.tween({y : this.y - 10}, 25);
-                        break;
-                    case 'down':
-                        this.tween({y : this.y + 10}, 25);
-                        break;
-                    case 'left':
-                        this.tween({x : this.x - 10}, 25);
-                        break;
-                    case 'right':
-                        this.tween({x : this.x + 10}, 25);
-                        break;
-                }
-            }            
+            if (this.moving) {
+                this.game.firePlayerMoveEvent(this, this.moving);
+                
+                this.move(this.x, this.y, this.moving);
+            }
         });
         return this;
-    },
-
-    move : function(direction) {
     }
 });

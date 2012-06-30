@@ -1,11 +1,54 @@
-function Game() {
+function ServerEventDispatcher() {
+    this._handlers = {
+    };
+}
+ServerEventDispatcher.prototype.registerHandler = function(type, handler) {
+    this._handlers[type] = handler;
+}
+ServerEventDispatcher.prototype.dispatch = function(event) {
+    for (key in this._handlers) {
+        this._handlers[key].dispatchSocketEvent(event);
+    }
+}
+
+function Game(socket) {
     this.options = {
     };
     this.players = {
     };
+    this.socket = socket;
 }
 
-Game.prototype.init = function(canvas, options) {
+Game.prototype.dispatchSocketEvent = function(event) {
+    if (!$.isArray(event)) {
+        event = [event];
+    }
+    
+    for (var i = 0; i < event.length; i++) {
+        console.log(event[i]);
+        if (event[i].game) {
+            this[event[i].cmd].apply(this, event[i].args);
+        } else {
+            console.log(this.players);
+
+            if (event[i].player) {
+                this.players[event[i].player][event[i].cmd].apply(this.players[event[i].player], event[i].args);
+            }
+        }
+    }
+}
+
+Game.prototype.firePlayerMoveEvent = function(player, direction) {
+    this.socket.send(JSON.stringify({
+        player : player.name,
+
+        cmd: 'move',
+        
+        args: [player.x, player.y, direction]
+    }));
+}
+
+Game.prototype.init = function(options) {
     var game = this;
     
     $.extend(true, this.options, {
@@ -38,33 +81,64 @@ Game.prototype.init = function(canvas, options) {
     Crafty.scene('load');
 }
 
-Game.prototype.create = function(name, x, y) {
-    var player = Crafty.e("2D, Canvas, Player, ship").attr({
+Game.prototype.create_player = function(name, x, y) {
+    console.log('player: ' + name + ' x:' + x + ' y:' + y);
+    this.players[name] = Crafty.e("2D, Canvas, Player, ship").attr({
         game: this,
+
+        name : name,
 
         x : x,
         y : y,
 
-        move : false,
+        moving : null,
 
         xspeed: this.options.user.speed,
         yspeed: this.options.user.speed
     });
-    return player;
+    return this.players[name];
+}
+
+Game.prototype.create_others = function(name, x, y) {
+    console.log('others: ' + name + ' x:' + x + ' y:' + y);
+    this.players[name] = Crafty.e("2D, Canvas, Others, ship").attr({
+        game: this,
+
+        name : name,
+
+        x : x,
+        y : y,
+
+        moving : null,
+
+        xspeed: this.options.user.speed,
+        yspeed: this.options.user.speed
+    });
+    return this.players[name];
+}
+
+Game.prototype.remove = function(name) {
+    delete this.players[name];
 }
 
 $(function() {
     var gameInstance = new Game();
-        gameInstance.init($('#canvas').get(0), {
+        gameInstance.init({
             size : [640, 640],
             tile : 64,
 
             user : {
                 speed : 10
             },
-
             onGameLoaded : function(game) {
-                player1 = game.create('player1', 0, 0);
+                var serverEventDispatcher = new ServerEventDispatcher();
+                    serverEventDispatcher.registerHandler('game',  game);
+
+                game.socket = socket = new WebSocket(ws_url);
+
+                socket.onmessage = function(event) {
+                    serverEventDispatcher.dispatch(JSON.parse(event.data));
+                };
             }
         });
 });
