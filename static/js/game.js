@@ -39,6 +39,7 @@ Game.prototype.dispatchSocketEvent = function(event) {
                     if(!player.isAnimated){
                         player[cmd].apply(player,args)
                     }else{
+                        console.log(player)
                         player.pushEvent(event[i]);
                     }
                 } else {
@@ -106,7 +107,6 @@ Game.prototype.init = function(options) {
 }
 
 Game.prototype.create_player = function(name, x, y) {
-    console.log('player: ' + name + ' x:' + x + ' y:' + y);
     this.players[name] = Crafty.e("2D, Canvas, Player, player_180").attr({
         game: this,
 
@@ -116,15 +116,14 @@ Game.prototype.create_player = function(name, x, y) {
         y : y,
 
         moving : null,
-
-        xspeed: this.options.user.speed,
-        yspeed: this.options.user.speed
+        direction:'up',
+        isAnimated : false
     });
+    console.log(this.players[name]);
     return this.players[name];
 }
 
 Game.prototype.create_others = function(name, x, y) {
-    console.log('others: ' + name + ' x:' + x + ' y:' + y);
     this.players[name] = Crafty.e("2D, Canvas, Others, player_180").attr({
         game: this,
 
@@ -134,13 +133,13 @@ Game.prototype.create_others = function(name, x, y) {
         y : y,
 
         moving : null,
-
-        //xspeed: this.options.user.speed,
-        //yspeed: this.options.user.speed,
-
+        direction:'up',
         queue : [                
-        ]
+        ],
+
+        isAnimated : false
     });
+    console.log(this.players[name]);
     return this.players[name];
 }
 

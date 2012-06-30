@@ -34,7 +34,7 @@ Crafty.c("PlayerControls", {
             return
 
         this.isAnimated = true
-        
+        this.direction = new_direction
         if(new_direction == 'left')
             this.sprite(3,0)
         if(new_direction == 'up')
@@ -43,8 +43,9 @@ Crafty.c("PlayerControls", {
             this.sprite(2,0)
         if(new_direction == 'right')
             this.sprite(1,0)
-        console.log('calling tween end')
+
         this.trigger('TweenEnd');
+        return this;
     }
 })
 
@@ -52,7 +53,7 @@ Crafty.c("Others", {
     init : function() {
         this.requires('Collision, Sprite, PlayerControls, Tween')
         .bind('TweenEnd', function() {
-            console.log('called tween end')
+            console.log('x  xx')
             this.isAnimated = false
             var event = this.pullEvent();
             if (event) {
@@ -67,6 +68,7 @@ Crafty.c("Others", {
 
     pushEvent : function(event) {
         console.log('push event');
+
         return this.queue.push(event);
     },
 
@@ -100,9 +102,10 @@ Crafty.c("Player", {
         })
         .bind('EnterFrame', function(e) {
             if(this.rotating){
-                this.rotate(this.new_direction);
-                this.rotating = false;
+                this.rotating = false
                 this.game.firePlayerRotateEvent(this, this.new_direction);
+                this.rotate(this.new_direction);
+
                 return ;
             }
             if (this.moving) {
