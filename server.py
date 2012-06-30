@@ -14,7 +14,7 @@ define(name = 'port', type = 'int', default = '8888', help = 'run server on desi
 define(name = 'host', type = 'str', default = '127.0.0.1', help = 'host the application is running on')
 
 
-sockets = {}
+
 
 class MainHandler(tornado.web.RequestHandler):
 
@@ -37,9 +37,10 @@ class GameWebSocket(websocket.WebSocketHandler):
 
     def open(self):
         self.name = random_name()
-        while self.name in sockets:
+        while self.name in self.application.sockets:
             self.name = random_name()
-        sockets[self.name] = self
+        self.application.sockets[self.name] = self
+        self.application.battlefield.add_player(self.name)
         message = {'cmd':'create', 'game':True, 'args':[self.name]}
         all_messages = [message]
         for player_name, player_pos in self.application.battlefield.get_players():
@@ -49,8 +50,8 @@ class GameWebSocket(websocket.WebSocketHandler):
         print "WebSocket opened %s" % self.name
 
     def broadcast(self, message):
-        for name, socket in sockets:
-            if socket is None or name == self.name:
+        for name, socket in self.application.sockets.items():
+            if socket.ws_connection is None or name == self.name:
                 continue
             socket.write_message(message)
 
@@ -85,6 +86,7 @@ class GameApplication(Application):
                         template_path = os.path.join(os.path.dirname(__file__), 'templates'),
                         debug = True)
         self.battlefield = BattleField(800, 600, 10)
+        self.sockets = {}
         super(GameApplication, self).__init__(handlers, **settings)
 
 application = GameApplication()

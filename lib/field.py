@@ -18,11 +18,12 @@ class BattleField(object):
     def __init__(self, height, width, cell_size):
         self.grid_cells = {}
         self.players = {}
+        self.cell_size = cell_size
         for i in range(0, height, cell_size):
             for j in range(0, width, cell_size):
                 self.grid_cells["%s_%s" % (i, j)] = GridCell(i, j)
 
-    def add_player(self, name, x, y):
+    def add_player(self, name, x = 0, y = 0):
         self.players[name] = x, y
 
     def remove_player(self, name):
@@ -33,9 +34,9 @@ class BattleField(object):
 
     def move_player(self, name, x, y, direction):
         if not name in self.players:
-            start_x, start_y = x, y
+            start_x, start_y = new_x, new_y = x, y
         else:
-            start_x, start_y = self.players[name]
+            start_x, start_y = new_x, new_y = self.players[name]
 
         if direction == 'left':
             new_x = start_x - self.cell_size
