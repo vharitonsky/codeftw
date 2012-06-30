@@ -10,8 +10,8 @@ from lib.field import BattleField
 
 from lib.nicepass import nicepass as random_name
 
-define(name = 'port', type = 'int', default = '8888', help = 'run server on designated port')
-define(name = 'host', type = 'str', default = '127.0.0.1', help = 'host the application is running on')
+define(name = 'port', type = int, default = '8888', help = 'run server on designated port')
+define(name = 'host', type = str, default = '127.0.0.1', help = 'host the application is running on')
 
 
 
