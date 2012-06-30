@@ -12,6 +12,7 @@ Crafty.c("PlayerControls", {
         
         this.isAnimated = true
         this.direction = direction
+        this.moved = true
         switch (direction) {
             case 'up':
                 this.tween({y : this.y - 20}, 5);
@@ -90,13 +91,6 @@ Crafty.c("Player", {
                         this.rotating = true
                         this.new_direction = DIRECTIONS[e.keyCode]
                 }
-                switch (e.keyCode) {
-                    case Crafty.keys.UP_ARROW:
-                    case Crafty.keys.DOWN_ARROW:
-                    case Crafty.keys.LEFT_ARROW:
-                    case Crafty.keys.RIGHT_ARROW:
-                        break;
-                }
             }else{
                 this.next_move = DIRECTIONS[e.keyCode]
                 this.next_move_key = e.keyCode
@@ -131,7 +125,10 @@ Crafty.c("Player", {
         })
         .bind('TweenEnd', function() {
             this.isAnimated = false
-            this.game.firePlayerMoveEvent(this, this.direction);
+            if(this.moved){
+                this.game.firePlayerMoveEvent(this, this.direction);
+                this.moved = false
+            }
         });
         return this;
     }
