@@ -43,7 +43,7 @@ Crafty.c("PlayerControls", {
 
 Crafty.c("Others", {
     init : function() {
-        this.requires('Collision, PlayerControls, Tween')
+        this.requires('Collision, Sprite, PlayerControls, Tween')
         .bind('TweenEnd', function() {
             this.isAnimated = false
             var event = this.pullEvent();
