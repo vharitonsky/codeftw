@@ -41,11 +41,11 @@ class GameWebSocket(websocket.WebSocketHandler):
             self.name = random_name()
         self.application.sockets[self.name] = self
         self.application.battlefield.add_player(self.name)
-        message = {'cmd':'create_others', 'game':True, 'args':[self.name, 0, 0]}
-        all_messages = [{'cmd':'create_player', 'game':True, 'args':[self.name, 0, 0]}]
+        message = {'cmd':'create_others', 'game':True, 'args':[self.name, 0, 0, 'up']}
+        all_messages = [{'cmd':'create_player', 'game':True, 'args':[self.name, 0, 0, 'up']}]
         for player_name, player_pos in self.application.battlefield.get_players():
             if player_name != self.name:
-                all_messages.append({'cmd':'create_others', 'game':True, 'args':[player_name, player_pos[0], player_pos[1]]})
+                all_messages.append({'cmd':'create_others', 'game':True, 'args':[player_name, player_pos[0], player_pos[1], player_pos[2]]})
         self.write_message(all_messages)
         self.broadcast(message)
         print "WebSocket opened %s" % self.name
@@ -89,7 +89,7 @@ class GameApplication(Application):
         settings = dict(static_path = os.path.join(os.path.dirname(__file__), 'static'),
                         template_path = os.path.join(os.path.dirname(__file__), 'templates'),
                         debug = True)
-        self.battlefield = BattleField(800, 800, 20)
+        self.battlefield = BattleField(800, 800, 40)
         self.sockets = {}
         super(GameApplication, self).__init__(handlers, **settings)
 
