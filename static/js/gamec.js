@@ -24,16 +24,16 @@ Crafty.c('PlayerControls', {
 
     rotate : function(direction) {
         if(direction == DIRECTIONS[Crafty.keys.UP_ARROW]) {
-            this.sprite(0, 0);
+            this.sprite(0, this.hero ? 0 : 1);
         }
         if(direction == DIRECTIONS[Crafty.keys.DOWN_ARROW]) {
-            this.sprite(2, 0);
+            this.sprite(2, this.hero ? 0 : 1);
         }
         if(direction == DIRECTIONS[Crafty.keys.LEFT_ARROW]) {
-            this.sprite(3, 0);
+            this.sprite(3, this.hero ? 0 : 1);
         }
         if(direction == DIRECTIONS[Crafty.keys.RIGHT_ARROW]) {
-            this.sprite(1, 0);
+            this.sprite(1, this.hero ? 0 : 1);
         }
         return this;
     },
@@ -45,7 +45,7 @@ Crafty.c('PlayerControls', {
         
         Crafty.e("2D, DOM, Color, bullet")
         .attr({w : 0, h : 0, x : player._x + 20, y :  player._y + 20 })
-        .color("rgb(255, 0, 0)")
+        .color(this.hero ? "rgb(2, 68, 204)" : "rgb(255, 0, 0)")
         .bind("EnterFrame", function(e) {
             speed = 40;
 
