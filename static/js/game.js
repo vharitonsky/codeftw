@@ -118,6 +118,8 @@ Game.prototype.create_others = function(name, x, y) {
 }
 
 Game.prototype.remove = function(name) {
+    this.players[name].destroy();
+    
     delete this.players[name];
 }
 
