@@ -38,6 +38,8 @@ Crafty.c("PlayerControls", {
             this.sprite(2,0)
         if(new_direction == 'right')
             this.sprite(1,0)
+
+        this.trigger('TweenEnd');
     }
 })
 
