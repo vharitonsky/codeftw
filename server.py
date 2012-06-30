@@ -89,7 +89,7 @@ class GameApplication(Application):
         settings = dict(static_path = os.path.join(os.path.dirname(__file__), 'static'),
                         template_path = os.path.join(os.path.dirname(__file__), 'templates'),
                         debug = True)
-        self.battlefield = BattleField(800, 800, 20)
+        self.battlefield = BattleField(800, 800, 40)
         self.sockets = {}
         super(GameApplication, self).__init__(handlers, **settings)
 
