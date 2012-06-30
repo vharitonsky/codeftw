@@ -3,6 +3,9 @@
 # Packages
 *.egg
 *.egg-info
+.project
+.pydevproject
+.idea*
 dist
 build
 eggs
