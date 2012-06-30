@@ -49,8 +49,8 @@ Crafty.c('PlayerControls', {
         .bind("EnterFrame", function(e) {
             speed = 40;
 
-            this.w = is_vertical_direction ? 5 : 30;
-            this.h = is_vertical_direction ? 30 : 5;
+            this.w = is_vertical_direction ? 5 : 20;
+            this.h = is_vertical_direction ? 20 : 5;
             
             if(direction == DIRECTIONS[Crafty.keys.UP_ARROW]) {
                 this.y -= speed;

@@ -63,7 +63,7 @@ Game.prototype.firePlayerRotateEvent = function(player, direction) {
 Game.prototype.firePlayerShootEvent = function(player) {
     this.socket.send(JSON.stringify({
         player : player.name,
-        cmd: 'rotate'
+        cmd: 'shoot'
     }));
 }
 
