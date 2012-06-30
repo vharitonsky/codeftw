@@ -30,8 +30,8 @@ Crafty.c("PlayerControls", {
     },
 
     rotate : function(new_direction) {
-        if(this.isAnimated)
-            return
+        //if(this.isAnimated)
+        //    return
 
         this.isAnimated = true
         this.direction = new_direction
@@ -82,7 +82,9 @@ Crafty.c("Player", {
     init : function() {
         this.requires("2D, Sprite, Controls, Collision, PlayerControls, Tween")
         .bind('KeyDown', function(e) {
+
             if (!this.moving) {
+                this.keyCode = e.keyCode
                 this.moving = DIRECTIONS[e.keyCode];
                 if (this.direction != DIRECTIONS[e.keyCode]) {
                         this.rotating = true
@@ -95,10 +97,25 @@ Crafty.c("Player", {
                     case Crafty.keys.RIGHT_ARROW:
                         break;
                 }
+            }else{
+                this.next_move = DIRECTIONS[e.keyCode]
+                this.next_move_key = e.keyCode
             }
         })
         .bind('KeyUp', function(e) {
-            this.moving = null;
+            if(e.keyCode == this.keyCode){
+                this.moving = null;
+                if(this.next_move){
+                    this.next_move = null
+                    this.moving = DIRECTIONS[this.next_move_key]
+                    this.keyCode = this.next_move_key
+                    this.rotating = true
+                    this.new_direction = DIRECTIONS[this.next_move_key]
+                }
+            }
+            if(this.next_move && e.keyCode == this.next_move_key){
+                this.next_move = null
+            }
         })
         .bind('EnterFrame', function(e) {
             if(this.rotating){
