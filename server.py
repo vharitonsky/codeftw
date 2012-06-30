@@ -44,7 +44,8 @@ class GameWebSocket(websocket.WebSocketHandler):
         message = {'cmd':'create_others', 'game':True, 'args':[self.name]}
         all_messages = [{'cmd':'create_player', 'game':True, 'args':[self.name]}]
         for player_name, player_pos in self.application.battlefield.get_players():
-            all_messages.append({'cmd':'create_others', 'game':True, 'args':[player_name, player_pos[0], player_pos[1]]})
+            if player_name != self.name:
+                all_messages.append({'cmd':'create_others', 'game':True, 'args':[player_name, player_pos[0], player_pos[1]]})
         self.write_message(all_messages)
         self.broadcast(message)
         print "WebSocket opened %s" % self.name
