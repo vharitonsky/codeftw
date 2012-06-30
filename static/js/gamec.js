@@ -13,16 +13,16 @@ Crafty.c("Others", {
     move : function(x, y, direction) {
         switch (direction) {
             case 'up':
-                this.tween({y : this.y - 10}, 25);
+                this.tween({y : this.y - 20}, 5);
                 break;
             case 'down':
-                this.tween({y : this.y + 10}, 25);
+                this.tween({y : this.y + 20}, 5);
                 break;
             case 'left':
-                this.tween({x : this.x - 10}, 25);
+                this.tween({x : this.x - 20}, 5);
                 break;
             case 'right':
-                this.tween({x : this.x + 10}, 25);
+                this.tween({x : this.x + 20}, 5);
                 break;
         }
         return this;

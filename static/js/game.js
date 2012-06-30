@@ -126,8 +126,8 @@ Game.prototype.remove = function(name) {
 $(function() {
     var gameInstance = new Game();
         gameInstance.init({
-            size : [640, 640],
-            tile : 64,
+            size : [800, 800],
+            tile : 40,
 
             user : {
                 speed : 10
