@@ -34,7 +34,7 @@ Game.prototype.dispatchSocketEvent = function(event) {
         } else {
             if (event[i].player) {
                 var player =this.players[event[i].player]
-                if ($.inArray(cmd, ['move', 'end']) == -1) {
+                if ($.inArray(cmd, ['move', 'rotate']) != -1) {
                     if(!player.isAnimated){
                         player[cmd].apply(player,args)
                     }else{
