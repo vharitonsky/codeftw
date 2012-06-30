@@ -42,7 +42,7 @@ class GameWebSocket(websocket.WebSocketHandler):
         self.application.sockets[self.name] = self
         self.application.battlefield.add_player(self.name)
         message = {'cmd':'create', 'game':True, 'args':[self.name]}
-        all_messages = [message]
+        all_messages = [{'cmd':'create', 'game':True, 'args':[self.name], 'self':True}]
         for player_name, player_pos in self.application.battlefield.get_players():
             all_messages.append({'cmd':'create', 'game':True, 'args':[player_name, player_pos[0], player_pos[1]]})
         self.write_message(all_messages)
@@ -63,6 +63,9 @@ class GameWebSocket(websocket.WebSocketHandler):
 
     def on_close(self):
         print "WebSocket closed %s" % self.name
+        self.application.battlefield.remove_player(self.name)
+        del self.application.sockets[self.name]
+        self.broadcast({'cmd':'remove', 'game':True, 'args' : [self.name]})
 
     def handle_move(self, message):
         x, y, direction = message['args']
