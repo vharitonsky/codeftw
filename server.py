@@ -41,10 +41,10 @@ class GameWebSocket(websocket.WebSocketHandler):
             self.name = random_name()
         self.application.sockets[self.name] = self
         self.application.battlefield.add_player(self.name)
-        message = {'cmd':'create', 'game':True, 'args':[self.name]}
-        all_messages = [{'cmd':'create', 'game':True, 'args':[self.name], 'self':True}]
+        message = {'cmd':'create_others', 'game':True, 'args':[self.name]}
+        all_messages = [{'cmd':'create_player', 'game':True, 'args':[self.name]}]
         for player_name, player_pos in self.application.battlefield.get_players():
-            all_messages.append({'cmd':'create', 'game':True, 'args':[player_name, player_pos[0], player_pos[1]]})
+            all_messages.append({'cmd':'create_others', 'game':True, 'args':[player_name, player_pos[0], player_pos[1]]})
         self.write_message(all_messages)
         self.broadcast(message)
         print "WebSocket opened %s" % self.name
