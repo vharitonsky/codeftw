@@ -36,6 +36,38 @@ Crafty.c('PlayerControls', {
             this.sprite(1, 0);
         }
         return this;
+    },
+
+    shoot : function(direction) {
+        var player = this;
+        
+        is_vertical_direction   = $.inArray(direction, [DIRECTIONS[Crafty.keys.UP_ARROW], DIRECTIONS[Crafty.keys.DOWN_ARROW]]) != -1;
+        
+        Crafty.e("2D, DOM, Color, bullet")
+        .attr({w : 0, h : 0, x : player._x + 20, y :  player._y + 20 })
+        .color("rgb(255, 0, 0)")
+        .bind("EnterFrame", function(e) {
+            speed = 40;
+
+            this.w = is_vertical_direction ? 5 : 30;
+            this.h = is_vertical_direction ? 30 : 5;
+            
+            if(direction == DIRECTIONS[Crafty.keys.UP_ARROW]) {
+                this.y -= speed;
+            }
+            if(direction == DIRECTIONS[Crafty.keys.DOWN_ARROW]) {
+                this.y += speed;
+            }
+            if(direction == DIRECTIONS[Crafty.keys.LEFT_ARROW]) {
+                this.x -= speed;
+            }
+            if(direction == DIRECTIONS[Crafty.keys.RIGHT_ARROW]) {
+                this.x += speed;
+            }
+            if (!this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height)) {
+                this.destroy();
+            }
+        });
     }
 });
 
@@ -49,15 +81,19 @@ Crafty.c('Player', {
     init : function() {
         this.requires("2D, Sprite, Controls, Collision, PlayerControls")
         .bind('KeyDown', function(e) {
-            if (this.direction != DIRECTIONS[e.keyCode]) {
-                this.rotating  = true;
-                this.direction = DIRECTIONS[e.keyCode];
+            if (e.keyCode === Crafty.keys.SPACE) {
+                this.shooting = true;
             } else {
-                this.moving = true;
-            }
+                if (this.direction != DIRECTIONS[e.keyCode]) {
+                    this.rotating  = true;
+                    this.direction = DIRECTIONS[e.keyCode];
+                } else {
+                    this.moving = true;
+                }
+            }        
         })
         .bind('KeyUp', function(e) {
-            this.moving = this.rotating = false;
+            this.moving = this.rotating = this.shooting = false;
         })
         .bind('EnterFrame', function(e) {
             if (this.rotating) {
@@ -65,10 +101,19 @@ Crafty.c('Player', {
                 this.game.firePlayerRotateEvent(this, this.direction);
             }
             if (this.moving) {
+                var from = {x : this.x, y : this.y};
                 this.move(this.x, this.y, this.direction);
-                this.game.firePlayerMoveEvent(this, this.direction);
+                if (this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height)) {
+                    this.game.firePlayerMoveEvent(this, this.direction);
+                } else {
+                    this.attr({x: from.x, y: from.y});
+                }
             }
-            this.moving = this.rotating = false;
+            if (this.shooting) {
+                this.shoot(this.direction);
+                this.game.firePlayerShootEvent(this);
+            }
+            this.moving = this.rotating = this.shooting = false;
         });
     }
 });

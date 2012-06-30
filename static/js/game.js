@@ -60,6 +60,13 @@ Game.prototype.firePlayerRotateEvent = function(player, direction) {
     }));
 }
 
+Game.prototype.firePlayerShootEvent = function(player) {
+    this.socket.send(JSON.stringify({
+        player : player.name,
+        cmd: 'rotate'
+    }));
+}
+
 Game.prototype.init = function(options) {
     var game = this;
     
@@ -109,7 +116,6 @@ Game.prototype.create_player = function(name, x, y) {
 
         speed : this.options.user.speed
     });
-    console.log(this.players[name]);
     return this.players[name];
 }
 
@@ -126,7 +132,6 @@ Game.prototype.create_others = function(name, x, y) {
 
         speed : this.options.user.speed
     });
-    console.log(this.players[name]);
     return this.players[name];
 }
 
