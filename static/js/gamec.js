@@ -11,6 +11,7 @@ Crafty.c("PlayerControls", {
             return
         
         this.isAnimated = true
+        this.direction = direction
         switch (direction) {
             case 'up':
                 this.tween({y : this.y - 20}, 5);
@@ -26,6 +27,17 @@ Crafty.c("PlayerControls", {
                 break;
         }
         return this;
+    },
+
+    rotate : function(new_direction) {
+        if(new_direction == 'left')
+            this.sprite(3,0)
+        if(new_direction == 'up')
+            this.sprite(0,0)
+        if(new_direction == 'down')
+            this.sprite(2,0)
+        if(new_direction == 'right')
+            this.sprite(1,0)
     }
 })
 
@@ -58,15 +70,19 @@ Crafty.c("Others", {
 
 Crafty.c("Player", {
     init : function() {
-        this.requires("2D, Controls, Collision, PlayerControls, Tween")
+        this.requires("2D, Sprite, Controls, Collision, PlayerControls, Tween")
         .bind('KeyDown', function(e) {
             if (!this.moving) {
+                this.moving = DIRECTIONS[e.keyCode];
+                if (this.direction != DIRECTIONS[e.keyCode]) {
+                        this.rotating = true
+                        this.new_direction = DIRECTIONS[e.keyCode]
+                }
                 switch (e.keyCode) {
                     case Crafty.keys.UP_ARROW:
                     case Crafty.keys.DOWN_ARROW:
                     case Crafty.keys.LEFT_ARROW:
                     case Crafty.keys.RIGHT_ARROW:
-                        this.direction = this.moving = DIRECTIONS[e.keyCode];
                         break;
                 }
             }
@@ -75,13 +91,18 @@ Crafty.c("Player", {
             this.moving = null;
         })
         .bind('EnterFrame', function(e) {
+            if(this.rotating){
+                this.rotate(this.new_direction);
+                this.rotating = false;
+                this.game.firePlayerRotateEvent(this, this.new_direction);
+                return ;
+            }
             if (this.moving) {
                 this.move(this.x, this.y, this.moving);
             }
         })
         .bind('TweenEnd', function() {
-            console.log('Tween end')
-            this.isAnimated=false
+            this.isAnimated = false
             this.game.firePlayerMoveEvent(this, this.direction);
         });
         return this;

@@ -59,6 +59,16 @@ Game.prototype.firePlayerMoveEvent = function(player, direction) {
     }));
 }
 
+Game.prototype.firePlayerRotateEvent = function(player, direction) {
+    this.socket.send(JSON.stringify({
+        player : player.name,
+
+        cmd: 'rotate',
+
+        args: [direction]
+    }));
+}
+
 Game.prototype.init = function(options) {
     var game = this;
     
@@ -84,7 +94,10 @@ Game.prototype.init = function(options) {
             game.options.resources  + 'sprite.png'
         ], function() {
             Crafty.sprite(options.tile, game.options.resources  + 'sprite.png', {
-                ship : [0, 0]
+                player_180 : [0, 0],
+                player_90  : [0, 1],
+                player_360 : [0, 2],
+                player_270 : [0, 3]
             });
             Crafty.scene('main');
         });
@@ -94,7 +107,7 @@ Game.prototype.init = function(options) {
 
 Game.prototype.create_player = function(name, x, y) {
     console.log('player: ' + name + ' x:' + x + ' y:' + y);
-    this.players[name] = Crafty.e("2D, Canvas, Player, ship").attr({
+    this.players[name] = Crafty.e("2D, Canvas, Player, player_180").attr({
         game: this,
 
         name : name,
@@ -112,7 +125,7 @@ Game.prototype.create_player = function(name, x, y) {
 
 Game.prototype.create_others = function(name, x, y) {
     console.log('others: ' + name + ' x:' + x + ' y:' + y);
-    this.players[name] = Crafty.e("2D, Canvas, Others, ship").attr({
+    this.players[name] = Crafty.e("2D, Canvas, Others, player").attr({
         game: this,
 
         name : name,
