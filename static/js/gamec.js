@@ -30,6 +30,11 @@ Crafty.c("PlayerControls", {
     },
 
     rotate : function(new_direction) {
+        if(this.isAnimated)
+            return
+
+        this.isAnimated = true
+        
         if(new_direction == 'left')
             this.sprite(3,0)
         if(new_direction == 'up')
