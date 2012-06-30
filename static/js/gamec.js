@@ -43,7 +43,7 @@ Crafty.c("PlayerControls", {
             this.sprite(2,0)
         if(new_direction == 'right')
             this.sprite(1,0)
-
+        console.log('calling tween end')
         this.trigger('TweenEnd');
     }
 })
@@ -52,6 +52,7 @@ Crafty.c("Others", {
     init : function() {
         this.requires('Collision, Sprite, PlayerControls, Tween')
         .bind('TweenEnd', function() {
+            console.log('called tween end')
             this.isAnimated = false
             var event = this.pullEvent();
             if (event) {
