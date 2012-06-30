@@ -33,18 +33,8 @@ Game.prototype.dispatchSocketEvent = function(event) {
             this[cmd].apply(this, event[i].args);
         } else {
             if (event[i].player) {
-                var player =this.players[event[i].player]
-
-                if ($.inArray(cmd, ['move', 'rotate']) != -1) {
-                    if(!player.isAnimated){
-                        player[cmd].apply(player,args)
-                    }else{
-                        console.log(player)
-                        player.pushEvent(event[i]);
-                    }
-                } else {
-                    this.players[event[i].player][event[i].cmd].apply(this.players[event[i].player], event[i].args);
-                }
+                var player = this.players[event[i].player];
+                    player[cmd].apply(player, args);
             }
         }
     }
@@ -115,9 +105,9 @@ Game.prototype.create_player = function(name, x, y) {
         x : x,
         y : y,
 
-        moving : null,
         direction:'up',
-        isAnimated : false
+
+        speed : this.options.user.speed
     });
     console.log(this.players[name]);
     return this.players[name];
@@ -132,12 +122,9 @@ Game.prototype.create_others = function(name, x, y) {
         x : x,
         y : y,
 
-        moving : null,
         direction:'up',
-        queue : [                
-        ],
 
-        isAnimated : false
+        speed : this.options.user.speed
     });
     console.log(this.players[name]);
     return this.players[name];
@@ -156,7 +143,7 @@ $(function() {
             tile : 40,
 
             user : {
-                speed : 10
+                speed : 40
             },
             onGameLoaded : function(game) {
                 var serverEventDispatcher = new ServerEventDispatcher();
