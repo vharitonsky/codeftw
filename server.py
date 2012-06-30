@@ -5,15 +5,18 @@ import tornado.web
 from tornado import websocket
 from tornado import autoreload
 from tornado.template import Template,Loader
+from tornado.options import define,parse_command_line,options
 
-loader = Loader("./")
+define(name = 'port', type='int', default='8888', help='run server on designated port')
+define(name = 'host', type='str', default='127.0.0.1', help = 'host the application is running on')
+
 
 sockets = []
 
 class MainHandler(tornado.web.RequestHandler):
-    #
     def get(self):
-        self.write(loader.load('tornadotest.html').generate(request = self.request))
+        ws_url = 'ws://%(host)s:%(port)s' % options
+        self.render('index.html',ws_url = ws_url)
 
 class EchoWebSocket(websocket.WebSocketHandler):
     def open(self):
@@ -27,17 +30,19 @@ class EchoWebSocket(websocket.WebSocketHandler):
            socket.write_message(message)
 
     def on_close(self):
-        print "WebSocket closed!!!!!"
+        print "WebSocket closed %s" % self
 
 application = tornado.web.Application([
     (r"/",MainHandler),
     (r"/websocket",EchoWebSocket),
-    (r"/feedparser/(.*)",tornado.web.StaticFileHandler,{'path':'./feedparser'}),
-],static_path=os.path.join(os.path.dirname(__file__),'feedparser'))
+    (r"/media/(.*)",tornado.web.StaticFileHandler,{'path':'./media'}),
+],static_path = os.path.join(os.path.dirname(__file__),'media')
+ ,template_path = os.path.join(os.path.dirname(__file__),'templates')
+ ,debug = True)
 
 if __name__ == "__main__":
-    application.listen(8888)
-    autoreload.watch('tornadotest.html')
+    parse_command_line()
+    application.listen(options.port)
     autoreload.start()
     tornado.ioloop.IOLoop.instance().start()
     
