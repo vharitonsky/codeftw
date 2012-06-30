@@ -125,7 +125,7 @@ Game.prototype.create_player = function(name, x, y) {
 
 Game.prototype.create_others = function(name, x, y) {
     console.log('others: ' + name + ' x:' + x + ' y:' + y);
-    this.players[name] = Crafty.e("2D, Canvas, Others, player").attr({
+    this.players[name] = Crafty.e("2D, Canvas, Others, player_180").attr({
         game: this,
 
         name : name,
