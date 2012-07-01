@@ -35,6 +35,9 @@ class Shoot(Command):
         self._timeout = _timeout
 
         def _method():
+            if self.name not in self.application.battlefield.players:
+                return False
+            x, y, direction, score = socket.application.battlefield.players[self.name]
             shoot_message = json.dumps({'cmd':'shoot', 'player':player, 'args':[direction]})
             socket.on_message(shoot_message, include_self = True)
 
