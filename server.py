@@ -107,6 +107,8 @@ class GameWebSocket(websocket.WebSocketHandler):
         return True
 
     def handle_execute(self, message):
+        if self.name not in self.application.battlefield.players:
+            return False
         x, y, direction, score = self.application.battlefield.players[self.name]
         locals = dict(
             __builtins__ = None,
