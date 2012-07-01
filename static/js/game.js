@@ -74,6 +74,7 @@ Game.prototype.firePlayerRespawnedEvent = function(name) {
         player : name,
         cmd: 'respawn'
     }));
+    console.log('respawn....');
 }
 
 Game.prototype.init = function(options) {
@@ -177,13 +178,13 @@ Game.prototype.remove = function(name) {
 
 Game.prototype.kill = function(name) {
     var game = this;
+    if (this.players[name]) {
+        game.remove(name);
 
-    player = this.players[name];
-    if (player) {
         function respawn() {
             game.firePlayerRespawnedEvent(name);
         }
-        setTimeout('respawn', 3000);
+        setTimeout(respawn, 3000);
     }
 }
 
