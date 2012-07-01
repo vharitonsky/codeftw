@@ -93,10 +93,18 @@ Game.prototype.init = function(options) {
         ], function() {
             Crafty.sprite(options.tile, game.options.resources  + 'sprite.png', {
                 player_180 : [0, 0],
-                player_90  : [0, 1],
-                player_360 : [0, 2],
-                player_270 : [0, 3]
+                player_90  : [1, 0],
+                player_360 : [2, 0],
+                player_270 : [3, 0],
+                
+                others_180 : [0, 1],
+                others_90  : [1, 1],
+                others_360 : [2, 1],
+                others_270 : [3, 1]
             });
+
+            Crafty.audio.add('Blaster', [ game.options.resources  +  'blaster.wav', game.options.resources  +  'blaster.mp3'])
+
             Crafty.scene('main');
         });
     });
@@ -106,13 +114,14 @@ Game.prototype.init = function(options) {
 Game.prototype.create_player = function(name, x, y) {
     this.players[name] = Crafty.e("2D, Canvas, Player, player_180").attr({
         game: this,
+        hero: true,
 
-        name : name,
+        name: name,
 
         x : x,
         y : y,
 
-        direction:'up',
+        direction: 'up',
 
         speed : this.options.user.speed
     });
@@ -120,10 +129,11 @@ Game.prototype.create_player = function(name, x, y) {
 }
 
 Game.prototype.create_others = function(name, x, y) {
-    this.players[name] = Crafty.e("2D, Canvas, Others, player_180").attr({
+    this.players[name] = Crafty.e("2D, Canvas, Others, others_180").attr({
         game: this,
+        hero: false,
 
-        name : name,
+        name: name,
 
         x : x,
         y : y,
@@ -144,7 +154,7 @@ Game.prototype.remove = function(name) {
 $(function() {
     var gameInstance = new Game();
         gameInstance.init({
-            size : [800, 800],
+            size : [400, 400],
             tile : 40,
 
             user : {
