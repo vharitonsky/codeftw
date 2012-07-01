@@ -57,10 +57,8 @@ class BattleField(object):
         return False
 
     def move_player(self, name, x, y, direction):
-        if not name in self.players:
-            start_x, start_y = new_x, new_y = x, y
-        else:
-            start_x, start_y, old_direction, score = new_x, new_y, new_direction, score = self.players[name]
+
+        start_x, start_y, old_direction, score = new_x, new_y, new_direction, score = self.players[name]
 
         if direction == 'left':
             new_x = start_x - self.cell_size
@@ -71,7 +69,7 @@ class BattleField(object):
         if direction == 'down':
             new_y = start_y + self.cell_size
 
-        self.players[name] = (new_x, new_y, direction)
+        self.players[name] = (new_x, new_y, direction, score)
 
         return True
 
