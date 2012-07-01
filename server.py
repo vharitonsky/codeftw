@@ -73,6 +73,8 @@ class GameWebSocket(websocket.WebSocketHandler):
         self.broadcast({'cmd':'remove', 'game':True, 'args' : [self.name]})
 
     def handle_move(self, message):
+        if not self.name in self.application.battlefield.players:
+            return
         x, y, direction = message['args']
         return self.application.battlefield.move_player(self.name, x, y, direction)
 
@@ -82,6 +84,8 @@ class GameWebSocket(websocket.WebSocketHandler):
 
     def handle_shoot(self, message):
         player = message['player']
+        if not player in self.application.battlefield.players:
+            return
         shot_player = self.application.battlefield.calculate_shot(player)
         if shot_player:
             self.application.battlefield.inc_score(player)
