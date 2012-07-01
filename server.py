@@ -82,6 +82,8 @@ class GameWebSocket(websocket.WebSocketHandler):
 
     def handle_shoot(self, message):
         player = message['player']
+        if not player in self.application.battlefield.players:
+            return
         shot_player = self.application.battlefield.calculate_shot(player)
         if shot_player:
             self.application.battlefield.inc_score(player)
