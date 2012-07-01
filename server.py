@@ -73,6 +73,8 @@ class GameWebSocket(websocket.WebSocketHandler):
         self.broadcast({'cmd':'remove', 'game':True, 'args' : [self.name]})
 
     def handle_move(self, message):
+        if not self.name in self.application.battlefield.players:
+            return
         x, y, direction = message['args']
         return self.application.battlefield.move_player(self.name, x, y, direction)
 
