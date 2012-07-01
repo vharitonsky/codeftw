@@ -33,7 +33,7 @@ class BattleField(object):
     def add_player(self, name, x = 0, y = 0, score = 0):
         x = 0
         y = 0
-        while self.cells['%s_%s' % (x, y)].player:
+        while self.cells['%s_%s' % (x, y)].player or self.obstacles.get((x, y)):
             x = random.randint(0, self.width / self.cell_size - 1) * self.cell_size
             y = random.randint(0, self.height / self.cell_size - 1) * self.cell_size
         self.players[name] = x, y, 'up', score
