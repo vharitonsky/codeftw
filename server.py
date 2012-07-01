@@ -46,6 +46,8 @@ class GameWebSocket(websocket.WebSocketHandler):
         for player_name, player_pos in self.application.battlefield.get_players():
             if player_name != self.name:
                 all_messages.append({'cmd':'create_others', 'game':True, 'args':[player_name, player_pos[0], player_pos[1], player_pos[2]]})
+        for coords, obstacle_type in self.application.battlefield.get_obstacles().items():
+            all_messages.append({'cmd':'create_obstacle', 'game':True, 'args':coords + (obstacle_type,)})
         self.write_message(all_messages)
         self.broadcast(message)
         print "WebSocket opened %s" % self.name
@@ -113,7 +115,8 @@ class GameApplication(Application):
         settings = dict(static_path = os.path.join(os.path.dirname(__file__), 'static'),
                         template_path = os.path.join(os.path.dirname(__file__), 'templates'),
                         debug = True)
-        self.battlefield = BattleField(600, 600, 40)
+        self.battlefield = BattleField(800, 800, 40)
+        self.battlefield.generate_obstacles()
         self.sockets = {}
         super(GameApplication, self).__init__(handlers, **settings)
 
