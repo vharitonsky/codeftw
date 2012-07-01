@@ -100,6 +100,8 @@ class GameWebSocket(websocket.WebSocketHandler):
 
 
     def respawn(self, shot_player, score):
+        if shot_player in self.application.battlefield.players:
+            return
         x, y = self.application.battlefield.add_player(shot_player, score = score)
         for name, socket in self.application.sockets.items():
             if name == shot_player:
