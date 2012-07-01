@@ -4,6 +4,7 @@ import json
 import tornado.ioloop
 from tornado.web import Application, RequestHandler, StaticFileHandler
 from tornado import websocket
+from tornado import gen
 from tornado.template import Template, Loader
 from tornado.options import define, parse_command_line, options
 from lib.field import BattleField
@@ -83,13 +84,10 @@ class GameWebSocket(websocket.WebSocketHandler):
         shot_player = self.application.battlefield.calculate_shot(player)
         if shot_player:
             self.application.battlefield.inc_score(player)
-
             self.application.battlefield.remove_player(shot_player)
-            
             self.write_message({'cmd':'kill', 'game':True, 'args' : [shot_player, application.battlefield.get_score()]})
             self.broadcast({'cmd':'kill', 'game':True, 'args' : [shot_player, application.battlefield.get_score()]})
-            #self.write_message({'cmd':'remove', 'game':True, 'args' : [shot_player]})
-            #self.broadcast({'cmd':'remove', 'game':True, 'args' : [shot_player]})
+
         return True
 
     def handle_respawn(self, message):

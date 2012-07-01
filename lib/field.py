@@ -91,6 +91,9 @@ class BattleField(object):
 
         while x >= 0 and x < self.width and y >= 0 and y < self.height:
             x, y = increment(x, y)
+            obstacle = self.obstacles.get((x, y))
+            if obstacle == 'stone':
+                return
             player = cells.get('%s_%s' % (x, y))
             if player:
                 return player
@@ -122,7 +125,7 @@ class BattleField(object):
         return self.obstacles
 
     def get_score(self):
-        score = [            
+        score = [
         ]
         for player in self.get_players():
             player_name, player_data = player
