@@ -46,6 +46,7 @@ class BattleField(object):
         except KeyError:
             pass
         else:
+            del self.players[name]
             for cell in self.cells.values():
                 if cell.player == name:
                     cell.player = None
