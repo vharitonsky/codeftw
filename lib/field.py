@@ -76,7 +76,8 @@ class BattleField(object):
 
         if self.obstacles.get((new_x, new_y)) == 'stone':
             return False
-
+        if new_x <= 0 or new_y <= 0 or new_x >= self.width or new_y >= self.height:
+            return False
         self.players[name] = (new_x, new_y, direction, score)
 
         return True
