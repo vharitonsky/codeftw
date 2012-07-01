@@ -36,7 +36,7 @@ class BattleField(object):
         while self.cells['%s_%s' % (x, y)].player:
             x = random.randint(0, self.width / self.cell_size - 1) * self.cell_size
             y = random.randint(0, self.height / self.cell_size - 1) * self.cell_size
-        self.players[name] = x, y, 'up'
+        self.players[name] = x, y, 'up', 0
         self.occupy_cell(self.cells['%s_%s' % (x, y)], name)
         return x, y
 
@@ -51,8 +51,8 @@ class BattleField(object):
 
     def rotate_player(self, name, direction):
         if name in self.players:
-            x, y, old_direction = self.players[name]
-            self.players[name] = x, y, direction
+            x, y, old_direction, score = self.players[name]
+            self.players[name] = x, y, direction, score
             return True
         return False
 
@@ -60,7 +60,7 @@ class BattleField(object):
         if not name in self.players:
             start_x, start_y = new_x, new_y = x, y
         else:
-            start_x, start_y, old_direction = new_x, new_y, new_direction = self.players[name]
+            start_x, start_y, old_direction, score = new_x, new_y, new_direction, score = self.players[name]
 
         if direction == 'left':
             new_x = start_x - self.cell_size
@@ -79,7 +79,7 @@ class BattleField(object):
         cells = {}
         for player in self.players:
             cells['%s_%s' % (self.players[player][0], self.players[player][1])] = player
-        x, y, direction = self.players[shooter]
+        x, y, direction, score = self.players[shooter]
         if direction == 'up':
             increment = lambda x, y:(x, y - self.cell_size)
         if direction == 'down':
@@ -120,3 +120,17 @@ class BattleField(object):
 
     def get_obstacles(self):
         return self.obstacles
+
+    def get_score(self):
+        score = [            
+        ]
+        for player in self.get_players():
+            player_name, player_data = player
+            score.append([player_name, player_data[3]])
+        return sorted(score, cmp = lambda a, b: a[1] > b[1])
+
+    def inc_score(self, player):
+        if self.players[player]:
+            x, y, direction, score = self.players[player]
+            score += 1
+            self.players[player] = x, y, direction, score

@@ -82,10 +82,24 @@ class GameWebSocket(websocket.WebSocketHandler):
         player = message['player']
         shot_player = self.application.battlefield.calculate_shot(player)
         if shot_player:
+            self.application.battlefield.inc_score(player)
+
             self.application.battlefield.remove_player(shot_player)
-            self.write_message({'cmd':'remove', 'game':True, 'args' : [shot_player]})
-            self.broadcast({'cmd':'remove', 'game':True, 'args' : [shot_player]})
+            
+            self.write_message({'cmd':'kill', 'game':True, 'args' : [shot_player, application.battlefield.get_score()]})
+            self.broadcast({'cmd':'kill', 'game':True, 'args' : [shot_player, application.battlefield.get_score()]})
+            #self.write_message({'cmd':'remove', 'game':True, 'args' : [shot_player]})
+            #self.broadcast({'cmd':'remove', 'game':True, 'args' : [shot_player]})
         return True
+
+    def handle_respawn(self, message):
+        self.name = message['player']
+        x, y = 0, 0
+        self.application.battlefield.add_player(self.name)
+        message = {'cmd':'create_player', 'game':True, 'args':[self.name, x, y, 'up']}
+        all_messages = {'cmd':'create_others', 'game':True, 'args':[self.name, x, y, 'up']}
+        self.write_message(message)
+        self.broadcast(all_messages)
 
 
 

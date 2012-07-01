@@ -74,6 +74,7 @@ Game.prototype.firePlayerRespawnedEvent = function(name) {
         player : name,
         cmd: 'respawn'
     }));
+    console.log('respawn....');
 }
 
 Game.prototype.init = function(options) {
@@ -175,16 +176,22 @@ Game.prototype.remove = function(name) {
     }
 }
 
-Game.prototype.kill = function(name) {
+Game.prototype.kill = function(name, score) {
     var game = this;
+    if (this.players[name]) {
+        game.remove(name);
 
-    player = this.players[name];
-    if (player) {
+        console.log('score...');
+        console.log(score);
         function respawn() {
             game.firePlayerRespawnedEvent(name);
         }
-        setTimeout('respawn', 3000);
+        setTimeout(respawn, 3000);
     }
+}
+
+Game.prototype.score = function(score) {
+    console.log(score);
 }
 
 $(function() {
