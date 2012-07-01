@@ -15,6 +15,8 @@ class BattleField(object):
 
     cells = None
     players = None
+    obstacles = None
+    obstacle_no = 10
     cell_size = None
 
     def __init__(self, height, width, cell_size):
@@ -22,6 +24,7 @@ class BattleField(object):
         self.width = width
         self.cells = {}
         self.players = {}
+        self.obstacles = {}
         self.cell_size = cell_size
         for i in range(0, height, cell_size):
             for j in range(0, width, cell_size):
@@ -42,6 +45,9 @@ class BattleField(object):
             del self.players[name]
         except KeyError:
             pass
+        for cell in self.cells.values():
+            if cell.player == name:
+                cell.player = None
 
     def rotate_player(self, name, direction):
         if name in self.players:
@@ -66,7 +72,6 @@ class BattleField(object):
             new_y = start_y + self.cell_size
 
         self.players[name] = (new_x, new_y, direction)
-        self.occupy_cell(self.cells["%s_%s" % (new_x, new_y)], name)
 
         return True
 
@@ -91,6 +96,16 @@ class BattleField(object):
                 return player
 
 
+    def generate_obstacles(self):
+        for i in range(0, 10):
+            x = 0
+            y = 0
+            while self.obstacles.get((x, y)):
+                x = random.randint(0, self.width / self.cell_size - 1) * self.cell_size
+                y = random.randint(0, self.height / self.cell_size - 1) * self.cell_size
+            self.obstacles[x, y] = random.choice(['tree', 'stone'])
+
+
     def occupy_cell(self, occupied_cell, player):
         for cell in self.cells.values():
             if cell.player == player:
@@ -103,3 +118,5 @@ class BattleField(object):
     def get_players(self):
         return self.players.items()
 
+    def get_obstacles(self):
+        return self.obstacles
