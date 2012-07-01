@@ -102,6 +102,9 @@ Game.prototype.init = function(options) {
                 others_360 : [2, 1],
                 others_270 : [3, 1]
             });
+
+            Crafty.audio.add('Blaster', [ game.options.resources  +  'blaster.wav', game.options.resources  +  'blaster.mp3'])
+
             Crafty.scene('main');
         });
     });
@@ -151,7 +154,7 @@ Game.prototype.remove = function(name) {
 $(function() {
     var gameInstance = new Game();
         gameInstance.init({
-            size : [800, 800],
+            size : [400, 400],
             tile : 40,
 
             user : {
