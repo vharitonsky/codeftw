@@ -30,24 +30,26 @@ class BattleField(object):
             for j in range(0, width, cell_size):
                 self.cells["%s_%s" % (i, j)] = GridCell(i, j)
 
-    def add_player(self, name, x = 0, y = 0):
+    def add_player(self, name, x = 0, y = 0, score = 0):
         x = 0
         y = 0
         while self.cells['%s_%s' % (x, y)].player:
             x = random.randint(0, self.width / self.cell_size - 1) * self.cell_size
             y = random.randint(0, self.height / self.cell_size - 1) * self.cell_size
-        self.players[name] = x, y, 'up', 0
+        self.players[name] = x, y, 'up', score
         self.occupy_cell(self.cells['%s_%s' % (x, y)], name)
         return x, y
 
     def remove_player(self, name):
         try:
-            del self.players[name]
+            x, y, direction, score = self.players[name]
         except KeyError:
             pass
-        for cell in self.cells.values():
-            if cell.player == name:
-                cell.player = None
+        else:
+            for cell in self.cells.values():
+                if cell.player == name:
+                    cell.player = None
+            return score
 
     def rotate_player(self, name, direction):
         if name in self.players:
