@@ -214,7 +214,7 @@ Game.prototype.kill = function(name, score) {
 }
 
 Game.prototype.create_obstacle = function(x, y, type) {
-    Crafty.e("2D, Canvas, " + type).attr({x : x, y: y});
+    Crafty.e("2D, Canvas, " + type).attr({x : x, y: y, z : 1000});
 }
 
 Game.prototype.code_error = function(error) {
