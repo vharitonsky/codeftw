@@ -1,9 +1,12 @@
-body, html { margin:0; padding: 0; overflow:hidden; font-family:Arial;}
+body, html { margin:0; padding: 0; overflow:hidden; font-family:Arial; font-size: 12px;}
 
 h3 {margin: 0px 0px 10px 0px;}
 
 .wrapper { padding: 10px; }
 .left {float: left;}
 .button {padding: 5px;}
+
+.score-wrapper { float: left; margin-left: 10px; width: 150px; }
+    .score-wrapper ul {list-style-type: none; margin: 0px; padding: 0px;  height: 300px; overflow: auto; border: 1px solid #666;}
 
 .CodeMirror {border: 1px solid #666;}

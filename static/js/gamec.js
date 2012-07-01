@@ -7,10 +7,6 @@ DIRECTIONS[Crafty.keys.RIGHT_ARROW] = 'right';
 
 
 Crafty.c('PlayerControls', {
-    init : function() {
-        this.requires('Blast');
-    },
-
     move : function(x, y, direction) {
         if(direction == DIRECTIONS[Crafty.keys.UP_ARROW]) {
             this.y -= this.speed;

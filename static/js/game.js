@@ -28,7 +28,7 @@ Game.prototype.dispatchSocketEvent = function(event) {
         console.log(event[i]);
         var cmd = event[i].cmd
         var args = event[i].args
-        console.log(args)
+
         if (event[i].game) {
             this[cmd].apply(this, event[i].args);
         } else {
@@ -98,8 +98,6 @@ Game.prototype.init = function(options) {
 
     Crafty.scene('main', function() {
         Crafty.background("url('" + game.options.resources + "background.png')");
-
-        Crafty.e("2D, DOM, Blast, stone").attr({x : 0, y: 0});
 
         console.log('loaded...');
         if ($.isFunction(game.options.onGameLoaded)) {
@@ -179,6 +177,8 @@ Game.prototype.remove = function(name) {
 Game.prototype.kill = function(name, score) {
     var game = this;
     if (this.players[name]) {
+        game.updateGameScore(score);
+        
         game.remove(name);
 
         console.log('score...');
@@ -187,6 +187,13 @@ Game.prototype.kill = function(name, score) {
             game.firePlayerRespawnedEvent(name);
         }
         setTimeout(respawn, 3000);
+    }
+}
+
+Game.prototype.updateGameScore = function(score) {
+    $('#score').html();
+    for (var i = 0; i < score.length; i++) {
+        $('#score').append('<li><span>' + score[i][0] + '</span>: ' + score[i][1] + '</li>');
     }
 }
 
