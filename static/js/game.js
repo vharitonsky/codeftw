@@ -23,7 +23,9 @@ Game.prototype.dispatchSocketEvent = function(event) {
     if (!$.isArray(event)) {
         event = [event];
     }
-    
+
+    console.log('shooting...');
+
     for (var i = 0; i < event.length; i++) {
         console.log(event[i]);
         var cmd = event[i].cmd
@@ -146,15 +148,17 @@ Game.prototype.create_others = function(name, x, y) {
 }
 
 Game.prototype.remove = function(name) {
-    this.players[name].destroy();
-    
-    delete this.players[name];
+    if (this.players[name]) {
+        this.players[name].destroy();
+        
+        delete this.players[name];
+    }
 }
 
 $(function() {
     var gameInstance = new Game();
         gameInstance.init({
-            size : [400, 400],
+            size : [800, 800],
             tile : 40,
 
             user : {
@@ -167,6 +171,7 @@ $(function() {
                 game.socket = socket = new WebSocket(ws_url);
 
                 socket.onmessage = function(event) {
+                    console.log(event);
                     serverEventDispatcher.dispatch(JSON.parse(event.data));
                 };
             }

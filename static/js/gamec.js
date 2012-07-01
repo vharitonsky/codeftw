@@ -117,5 +117,8 @@ Crafty.c('Player', {
             }
             this.moving = this.rotating = this.shooting = false;
         });
+        /*.onHit('others_180', function(e) {
+            console.log('HERE...');
+        });*/
     }
 });
