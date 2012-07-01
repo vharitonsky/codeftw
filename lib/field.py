@@ -55,6 +55,8 @@ class BattleField(object):
     def rotate_player(self, name, direction):
         if name in self.players:
             x, y, old_direction, score = self.players[name]
+            if direction == old_direction:
+                return False
             self.players[name] = x, y, direction, score
             return True
         return False

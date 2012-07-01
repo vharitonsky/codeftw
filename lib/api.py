@@ -18,9 +18,8 @@ class MoveCommand(Command):
         self._timeout = _timeout
 
         def _method():
-            if direction != self.direction:
-                rotate_msg = json.dumps({'cmd':'rotate', 'player':player, 'args' : [self.direction]})
-                socket.on_message(rotate_msg, include_self = True)
+            rotate_msg = json.dumps({'cmd':'rotate', 'player':player, 'args' : [self.direction]})
+            socket.on_message(rotate_msg, include_self = True)
             move_message = json.dumps({'cmd':'move', 'player':player, 'args':[0, 0, self.direction]})
             socket.on_message(move_message, include_self = True)
         self._method = _method
