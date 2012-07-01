@@ -41,11 +41,11 @@ Crafty.c('PlayerControls', {
 
     shoot : function(direction) {
         var player = this;
-        
+
         is_vertical_direction   = $.inArray(direction, [DIRECTIONS[Crafty.keys.UP_ARROW], DIRECTIONS[Crafty.keys.DOWN_ARROW]]) != -1;
 
         Crafty.audio.play("Blaster");
-                
+
         Crafty.e("2D, DOM, Color, Collision, bullet")
         .attr({w : 0, h : 0, x : player._x + 20, y :  player._y + 20 })
         .color(this.hero ? "rgb(2, 68, 204)" : "rgb(255, 0, 0)")
@@ -54,7 +54,7 @@ Crafty.c('PlayerControls', {
 
             this.w = is_vertical_direction ? 5 : 20;
             this.h = is_vertical_direction ? 20 : 5;
-            
+
             if(direction == DIRECTIONS[Crafty.keys.UP_ARROW]) {
                 this.y -= speed;
             }
@@ -70,18 +70,11 @@ Crafty.c('PlayerControls', {
             if (!this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height)) {
                 this.destroy();
             }
-        });
-        /*
+        })
         .collision()
         .onHit("stone", function(e) {
-            e[0].obj.destroy();
-            this.destroy();
-        })
-        .onHit("tree", function(e) {
-            e[0].obj.destroy();
             this.destroy();
         });
-        */
     }
 });
 

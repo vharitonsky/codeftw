@@ -177,17 +177,14 @@ Game.prototype.remove = function(name) {
 Game.prototype.kill = function(name, score) {
     var game = this;
     if (this.players[name]) {
-        game.updateGameScore(score);
-        
         game.remove(name);
-
-        console.log('score...');
-        console.log(score);
-        function respawn() {
-            game.firePlayerRespawnedEvent(name);
-        }
-        setTimeout(respawn, 3000);
+        
+        game.updateGameScore(score);
     }
+}
+
+Game.prototype.create_obstacle = function(x, y, type) {
+    Crafty.e("2D, Canvas, " + type).attr({x : x, y: y});
 }
 
 Game.prototype.updateGameScore = function(score) {
