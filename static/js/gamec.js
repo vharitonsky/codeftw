@@ -7,10 +7,6 @@ DIRECTIONS[Crafty.keys.RIGHT_ARROW] = 'right';
 
 
 Crafty.c('PlayerControls', {
-    init : function() {
-        this.requires('Blast');
-    },
-
     move : function(x, y, direction) {
         if(direction == DIRECTIONS[Crafty.keys.UP_ARROW]) {
             this.y -= this.speed;
@@ -74,7 +70,8 @@ Crafty.c('PlayerControls', {
             if (!this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height)) {
                 this.destroy();
             }
-        })
+        });
+        /*
         .collision()
         .onHit("stone", function(e) {
             e[0].obj.destroy();
@@ -84,6 +81,7 @@ Crafty.c('PlayerControls', {
             e[0].obj.destroy();
             this.destroy();
         });
+        */
     }
 });
 
