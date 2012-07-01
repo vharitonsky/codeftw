@@ -76,6 +76,16 @@ Game.prototype.firePlayerRespawnedEvent = function(name) {
     console.log('respawn....');
 }
 
+Game.prototype.firePlayerSendCodeEvent = function(name, code) {
+    this.socket.send(JSON.stringify({
+        player : name,
+        args : [code],
+        cmd: 'execute'
+    }));
+
+    console.log('execute...: ' + name);
+}
+
 Game.prototype.init = function(options) {
     var game = this;
     
@@ -91,6 +101,11 @@ Game.prototype.init = function(options) {
         indentUnit: 4,
         tabMode: "shift",
         matchBrackets: true
+    });
+
+    $('#runCode').click(function (event) {
+        event.preventDefault();
+        game.firePlayerSendCodeEvent(game.getUsername(), editor.getValue());
     });
 
     Crafty.init(this.options.size[0], this.options.size[1]).canvas.init();
@@ -172,8 +187,6 @@ Game.prototype.create_others = function(name, x, y, direction) {
 }
 
 Game.prototype.remove = function(name) {
-    console.log(name);
-
     var player = this.players[name];
     if (player) {
         x = player.x;
@@ -204,6 +217,11 @@ Game.prototype.create_obstacle = function(x, y, type) {
     Crafty.e("2D, Canvas, " + type).attr({x : x, y: y});
 }
 
+Game.prototype.code_error = function(error) {
+    console.log(error);
+    this.updateCodeError(error);
+}
+
 Game.prototype.updateGameScore = function(score) {
     $('#score').html('');
     for (var i = 0; i < score.length; i++) {
@@ -215,8 +233,17 @@ Game.prototype.updateUserName = function(name) {
     $('#name').html(name);
 }
 
-Game.prototype.score = function(score) {
-    console.log(score);
+Game.prototype.getUsername = function() {
+    for (player in this.players) {
+        if (this.players[player].hero) {
+            return player;
+        }
+    }
+    return null;
+}
+
+Game.prototype.updateCodeError = function(error) {
+    $('#codeError').html(error);
 }
 
 $(function() {

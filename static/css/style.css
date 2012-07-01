@@ -9,4 +9,6 @@ h3 {margin: 0px 0px 10px 0px;}
 .score-wrapper { float: left; margin-left: 10px; width: 150px; }
     .score-wrapper ul {list-style-type: none; margin: 0px; padding: 0px;  height: 300px; overflow: auto; border: 1px solid #666;}
 
+small {color: red;}
+
 .CodeMirror {border: 1px solid #666;}
