@@ -72,6 +72,9 @@ class BattleField(object):
         if direction == 'down':
             new_y = start_y + self.cell_size
 
+        if self.obstacles.get((new_x, new_y)) == 'stone':
+            return False
+
         self.players[name] = (new_x, new_y, direction, score)
 
         return True

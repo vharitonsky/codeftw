@@ -1,6 +1,7 @@
 import os
 import json
 from datetime import timedelta
+import traceback
 
 import tornado.ioloop
 from tornado.web import Application, RequestHandler, StaticFileHandler
@@ -9,6 +10,7 @@ from tornado import gen
 from tornado.template import Template, Loader
 from tornado.options import define, parse_command_line, options
 from lib.field import BattleField
+from lib.api import MoveDown, MoveLeft, MoveRight, MoveUp, Shoot
 
 from lib.nicepass import nicepass as random_name
 
@@ -60,11 +62,13 @@ class GameWebSocket(websocket.WebSocketHandler):
                 continue
             socket.write_message(message)
 
-    def on_message(self, message):
+    def on_message(self, message, include_self = False):
         message = json.loads(message)
         results = getattr(self, 'handle_%s' % message['cmd'], lambda x:None)(message)
         if results:
             self.broadcast(message)
+            if include_self:
+                self.write_message(message)
 
     def on_close(self):
         print "WebSocket closed %s" % self.name
@@ -102,6 +106,24 @@ class GameWebSocket(websocket.WebSocketHandler):
             ioloop.add_callback(timeout)
         return True
 
+    def handle_execute(self, message):
+        x, y, direction, score = self.application.battlefield.players[self.name]
+        locals = dict(
+            __builtins__ = None,
+            move_down = MoveDown(self.name, direction, self, ioloop),
+            move_left = MoveLeft(self.name, direction, self, ioloop),
+            move_right = MoveRight(self.name, direction, self, ioloop),
+            move_up = MoveUp(self.name, direction, self, ioloop),
+            shoot = Shoot(self.name, direction, self, ioloop)
+        )
+        code = message['args'][0]
+        self.timeout = 0
+        try:
+            exec code in locals, locals
+        except Exception as e:
+            self.write_message({'cmd':'code_error', 'game':True, 'args':[str(e)]})
+
+        return False
 
     def respawn(self, shot_player, score):
         if shot_player in self.application.battlefield.players:
