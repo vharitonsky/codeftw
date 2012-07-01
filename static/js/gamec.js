@@ -113,11 +113,12 @@ Crafty.c('Player', {
             }
             if (this.shooting) {
                 this.shoot(this.direction);
-                this.game.firePlayerShootEvent(this);
+                this.game.firePlayerShootEvent(this, this.direction);
             }
             this.moving = this.rotating = this.shooting = false;
         });
-        /*.onHit('others_180', function(e) {
+        /*.collision()
+        .onHit('others_180', function(e) {
             console.log('HERE...');
         });*/
     }

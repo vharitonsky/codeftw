@@ -24,8 +24,6 @@ Game.prototype.dispatchSocketEvent = function(event) {
         event = [event];
     }
 
-    console.log('shooting...');
-
     for (var i = 0; i < event.length; i++) {
         console.log(event[i]);
         var cmd = event[i].cmd
@@ -62,10 +60,12 @@ Game.prototype.firePlayerRotateEvent = function(player, direction) {
     }));
 }
 
-Game.prototype.firePlayerShootEvent = function(player) {
+Game.prototype.firePlayerShootEvent = function(player, direction) {
     this.socket.send(JSON.stringify({
         player : player.name,
-        cmd: 'shoot'
+        cmd: 'shoot',
+
+        args: [direction]
     }));
 }
 
