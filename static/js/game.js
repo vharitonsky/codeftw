@@ -199,7 +199,7 @@ Game.prototype.create_obstacle = function(x, y, type) {
 }
 
 Game.prototype.updateGameScore = function(score) {
-    $('#score').html();
+    $('#score').html('');
     for (var i = 0; i < score.length; i++) {
         $('#score').append('<li><span>' + score[i][0] + '</span>: ' + score[i][1] + '</li>');
     }
