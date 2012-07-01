@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import timedelta
 
 import tornado.ioloop
 from tornado.web import Application, RequestHandler, StaticFileHandler
@@ -84,21 +85,28 @@ class GameWebSocket(websocket.WebSocketHandler):
         shot_player = self.application.battlefield.calculate_shot(player)
         if shot_player:
             self.application.battlefield.inc_score(player)
-            self.application.battlefield.remove_player(shot_player)
+            score = self.application.battlefield.remove_player(shot_player)
             self.write_message({'cmd':'kill', 'game':True, 'args' : [shot_player, application.battlefield.get_score()]})
             self.broadcast({'cmd':'kill', 'game':True, 'args' : [shot_player, application.battlefield.get_score()]})
 
+            def respawn():
+                self.respawn(shot_player, score)
+
+            def timeout():
+                ioloop.add_timeout(timedelta(seconds = 3), respawn)
+
+            ioloop.add_callback(timeout)
         return True
 
-    def handle_respawn(self, message):
-        self.name = message['player']
-        x, y = 0, 0
-        self.application.battlefield.add_player(self.name)
-        message = {'cmd':'create_player', 'game':True, 'args':[self.name, x, y, 'up']}
-        all_messages = {'cmd':'create_others', 'game':True, 'args':[self.name, x, y, 'up']}
-        self.write_message(message)
-        self.broadcast(all_messages)
 
+    def respawn(self, shot_player, score):
+        x, y = self.application.battlefield.add_player(shot_player, score = score)
+        for name, socket in self.application.sockets.items():
+            if name == shot_player:
+                message = {'cmd':'create_player', 'game':True, 'args':[shot_player, x, y, 'up']}
+            else:
+                message = {'cmd':'create_others', 'game':True, 'args':[shot_player, x, y, 'up']}
+            socket.write_message(message)
 
 
 class GameApplication(Application):
@@ -113,7 +121,7 @@ class GameApplication(Application):
         settings = dict(static_path = os.path.join(os.path.dirname(__file__), 'static'),
                         template_path = os.path.join(os.path.dirname(__file__), 'templates'),
                         debug = True)
-        self.battlefield = BattleField(800, 800, 40)
+        self.battlefield = BattleField(600, 600, 40)
         self.battlefield.generate_obstacles()
         self.sockets = {}
         super(GameApplication, self).__init__(handlers, **settings)
@@ -123,5 +131,6 @@ application = GameApplication()
 if __name__ == "__main__":
     parse_command_line()
     application.listen(options.port)
-    tornado.ioloop.IOLoop.instance().start()
+    ioloop = tornado.ioloop.IOLoop.instance()
+    ioloop.start()
 
