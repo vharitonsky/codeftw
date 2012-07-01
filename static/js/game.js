@@ -124,7 +124,8 @@ Game.prototype.init = function(options) {
                 blase : [0, 2]
             });
 
-            Crafty.audio.add('Blaster', [ game.options.resources  +  'blaster.wav', game.options.resources  +  'blaster.mp3'])
+            Crafty.audio.add('Blaster', [ game.options.resources  +  'blaster.wav', game.options.resources  +  'blaster.mp3']);
+            Crafty.audio.add('Explosion', [ game.options.resources + 'explosion.mp3']);
 
             Crafty.scene('main');
         });
@@ -133,6 +134,7 @@ Game.prototype.init = function(options) {
 }
 
 Game.prototype.create_player = function(name, x, y) {
+
     this.players[name] = Crafty.e("2D, Canvas, Player, player_180").attr({
         game: this,
         hero: true,
@@ -167,6 +169,8 @@ Game.prototype.create_others = function(name, x, y, direction) {
 }
 
 Game.prototype.remove = function(name) {
+    console.log(name);
+
     var player = this.players[name];
     if (player) {
         x = player.x;
@@ -175,8 +179,7 @@ Game.prototype.remove = function(name) {
         this.players[name].destroy();
         delete this.players[name];
 
-        console.log(x + ' ' + y);
-
+        Crafty.audio.play("Explosion");
         var blase = Crafty.e('2D, Canvas, blase').attr({x : x, y : y});
         function destroyBlase() {
             blase.destroy();
