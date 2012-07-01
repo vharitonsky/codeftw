@@ -69,6 +69,13 @@ Game.prototype.firePlayerShootEvent = function(player, direction) {
     }));
 }
 
+Game.prototype.firePlayerRespawnedEvent = function(name) {
+    this.socket.send(JSON.stringify({
+        player : name,
+        cmd: 'respawn'
+    }));
+}
+
 Game.prototype.init = function(options) {
     var game = this;
     
@@ -78,10 +85,20 @@ Game.prototype.init = function(options) {
         onGameLoaded : function(game) {}
     }, options);
 
+    var editor = CodeMirror.fromTextArea($('#code').get(0), {
+        mode: {name: "python", version: 2, singleLineStringErrors: false},
+        lineNumbers: true,
+        indentUnit: 4,
+        tabMode: "shift",
+        matchBrackets: true
+    });
+
     Crafty.init(this.options.size[0], this.options.size[1]).canvas.init();
 
     Crafty.scene('main', function() {
         Crafty.background("url('" + game.options.resources + "background.png')");
+
+        Crafty.e("2D, DOM, Blast, stone").attr({x : 0, y: 0});
 
         console.log('loaded...');
         if ($.isFunction(game.options.onGameLoaded)) {
@@ -102,7 +119,10 @@ Game.prototype.init = function(options) {
                 others_180 : [0, 1],
                 others_90  : [1, 1],
                 others_360 : [2, 1],
-                others_270 : [3, 1]
+                others_270 : [3, 1],
+
+                stone : [4, 0],
+                tree  : [4, 1]
             });
 
             Crafty.audio.add('Blaster', [ game.options.resources  +  'blaster.wav', game.options.resources  +  'blaster.mp3'])
@@ -155,10 +175,22 @@ Game.prototype.remove = function(name) {
     }
 }
 
+Game.prototype.kill = function(name) {
+    var game = this;
+
+    player = this.players[name];
+    if (player) {
+        function respawn() {
+            game.firePlayerRespawnedEvent(name);
+        }
+        setTimeout('respawn', 3000);
+    }
+}
+
 $(function() {
     var gameInstance = new Game();
         gameInstance.init({
-            size : [800, 800],
+            size : [600, 600],
             tile : 40,
 
             user : {

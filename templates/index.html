@@ -1,17 +1,25 @@
 <html>
 	<head>
+        <link rel="stylesheet" type="text/css" href="{{ static_url('js/lib/codemirror/codemirror.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ static_url('css/style.css') }}" />
+
         <script type="text/javascript" src="{{ static_url('js/lib/jquery-1.7.1.min.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('js/lib/codemirror/codemirror.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('js/lib/codemirror/mode/python.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('js/lib/crafty-min.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('js/gamec.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('js/game.js') }}"></script>
         <script type="text/javascript">
             var ws_url = '{% raw ws_url %}';
         </script>
-		<style>
-			body, html { margin:0; padding: 0; overflow:hidden; font-family:Arial; font-size:20px }
-		</style>
 	</head>
 	<body>
-        <div id="cr-stage"></div>
+        <div class="wrapper">
+            <div id="cr-stage" class="left"></div>
+            <div style="margin-left: 620px;">
+                <h3>Code:</h3>
+                <textarea id="code"></textarea>
+            </div>
+        </div>
 	</body>
 </html>

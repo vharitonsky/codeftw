@@ -5,7 +5,12 @@ DIRECTIONS[Crafty.keys.DOWN_ARROW]  = 'down';
 DIRECTIONS[Crafty.keys.LEFT_ARROW]  = 'left';
 DIRECTIONS[Crafty.keys.RIGHT_ARROW] = 'right';
 
+
 Crafty.c('PlayerControls', {
+    init : function() {
+        this.requires('Blast');
+    },
+
     move : function(x, y, direction) {
         if(direction == DIRECTIONS[Crafty.keys.UP_ARROW]) {
             this.y -= this.speed;
@@ -45,7 +50,7 @@ Crafty.c('PlayerControls', {
 
         Crafty.audio.play("Blaster");
                 
-        Crafty.e("2D, DOM, Color, bullet")
+        Crafty.e("2D, DOM, Color, Collision, bullet")
         .attr({w : 0, h : 0, x : player._x + 20, y :  player._y + 20 })
         .color(this.hero ? "rgb(2, 68, 204)" : "rgb(255, 0, 0)")
         .bind("EnterFrame", function(e) {
@@ -69,6 +74,15 @@ Crafty.c('PlayerControls', {
             if (!this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height)) {
                 this.destroy();
             }
+        })
+        .collision()
+        .onHit("stone", function(e) {
+            e[0].obj.destroy();
+            this.destroy();
+        })
+        .onHit("tree", function(e) {
+            e[0].obj.destroy();
+            this.destroy();
         });
     }
 });
@@ -83,16 +97,18 @@ Crafty.c('Player', {
     init : function() {
         this.requires("2D, Sprite, Controls, Collision, PlayerControls")
         .bind('KeyDown', function(e) {
-            if (e.keyCode === Crafty.keys.SPACE) {
-                this.shooting = true;
-            } else {
-                if (this.direction != DIRECTIONS[e.keyCode]) {
-                    this.rotating  = true;
-                    this.direction = DIRECTIONS[e.keyCode];
+            if (!$(e.target).is('textarea')) {
+                if (e.keyCode === Crafty.keys.SPACE) {
+                    this.shooting = true;
                 } else {
-                    this.moving = true;
+                    if (this.direction != DIRECTIONS[e.keyCode]) {
+                        this.rotating  = true;
+                        this.direction = DIRECTIONS[e.keyCode];
+                    } else {
+                        this.moving = true;
+                    }
                 }
-            }        
+            }
         })
         .bind('KeyUp', function(e) {
             this.moving = this.rotating = this.shooting = false;
@@ -106,7 +122,10 @@ Crafty.c('Player', {
                 var from = {x : this.x, y : this.y};
                 this.move(this.x, this.y, this.direction);
 
-                if (this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height) && !this.hit('Others')) {
+                if (this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height)
+                    && !this.hit('Others')
+                    && !this.hit('stone')
+                ) {
                     this.game.firePlayerMoveEvent(this, this.direction);
                 } else {
                     this.attr({x: from.x, y: from.y});
