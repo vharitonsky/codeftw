@@ -25,7 +25,6 @@ Game.prototype.dispatchSocketEvent = function(event) {
     }
 
     for (var i = 0; i < event.length; i++) {
-        console.log(event[i]);
         var cmd = event[i].cmd
         var args = event[i].args
 
@@ -121,7 +120,8 @@ Game.prototype.init = function(options) {
                 others_270 : [3, 1],
 
                 stone : [4, 0],
-                tree  : [4, 1]
+                tree  : [4, 1],
+                blase : [0, 2]
             });
 
             Crafty.audio.add('Blaster', [ game.options.resources  +  'blaster.wav', game.options.resources  +  'blaster.mp3'])
@@ -149,7 +149,7 @@ Game.prototype.create_player = function(name, x, y) {
     return this.players[name];
 }
 
-Game.prototype.create_others = function(name, x, y) {
+Game.prototype.create_others = function(name, x, y, direction) {
     this.players[name] = Crafty.e("2D, Canvas, Others, others_180").attr({
         game: this,
         hero: false,
@@ -159,7 +159,7 @@ Game.prototype.create_others = function(name, x, y) {
         x : x,
         y : y,
 
-        direction:'up',
+        direction: direction,
 
         speed : this.options.user.speed
     });
@@ -167,10 +167,21 @@ Game.prototype.create_others = function(name, x, y) {
 }
 
 Game.prototype.remove = function(name) {
-    if (this.players[name]) {
+    var player = this.players[name];
+    if (player) {
+        x = player.x;
+        y = player.y;
+
         this.players[name].destroy();
-        
         delete this.players[name];
+
+        console.log(x + ' ' + y);
+
+        var blase = Crafty.e('2D, Canvas, blase').attr({x : x, y : y});
+        function destroyBlase() {
+            blase.destroy();
+        }
+        setInterval(destroyBlase, 200);
     }
 }
 
@@ -178,7 +189,7 @@ Game.prototype.kill = function(name, score) {
     var game = this;
     if (this.players[name]) {
         game.remove(name);
-        
+
         game.updateGameScore(score);
     }
 }
