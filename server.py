@@ -85,9 +85,9 @@ class GameWebSocket(websocket.WebSocketHandler):
         shot_player = self.application.battlefield.calculate_shot(player)
         if shot_player:
             self.application.battlefield.inc_score(player)
-            score = self.application.battlefield.remove_player(shot_player)
             self.write_message({'cmd':'kill', 'game':True, 'args' : [shot_player, application.battlefield.get_score()]})
             self.broadcast({'cmd':'kill', 'game':True, 'args' : [shot_player, application.battlefield.get_score()]})
+            score = self.application.battlefield.remove_player(shot_player)
 
             def respawn():
                 self.respawn(shot_player, score)
