@@ -40,9 +40,9 @@ class GameWebSocket(websocket.WebSocketHandler):
         while self.name in self.application.sockets:
             self.name = random_name()
         self.application.sockets[self.name] = self
-        self.application.battlefield.add_player(self.name)
-        message = {'cmd':'create_others', 'game':True, 'args':[self.name, 0, 0, 'up']}
-        all_messages = [{'cmd':'create_player', 'game':True, 'args':[self.name, 0, 0, 'up']}]
+        x, y = self.application.battlefield.add_player(self.name)
+        message = {'cmd':'create_others', 'game':True, 'args':[self.name, x, y, 'up']}
+        all_messages = [{'cmd':'create_player', 'game':True, 'args':[self.name, x, y, 'up']}]
         for player_name, player_pos in self.application.battlefield.get_players():
             if player_name != self.name:
                 all_messages.append({'cmd':'create_others', 'game':True, 'args':[player_name, player_pos[0], player_pos[1], player_pos[2]]})
@@ -73,9 +73,17 @@ class GameWebSocket(websocket.WebSocketHandler):
         return self.application.battlefield.move_player(self.name, x, y, direction)
 
     def handle_rotate(self, message):
-        return True
+        return self.application.battlefield.rotate_player(self.name, message['args'][0])
 
-    def handle_shoot(self):pass
+
+    def handle_shoot(self, message):
+        player = message['player']
+        shot_player = self.application.battlefield.calculate_shot(player)
+        if shot_player:
+            self.write_message({'cmd':'remove', 'game':True, 'args' : [shot_player]})
+            self.broadcast({'cmd':'remove', 'game':True, 'args' : [shot_player]})
+
+
 
 class GameApplication(Application):
 
