@@ -83,6 +83,7 @@ class GameWebSocket(websocket.WebSocketHandler):
             self.application.battlefield.remove_player(shot_player)
             self.write_message({'cmd':'remove', 'game':True, 'args' : [shot_player]})
             self.broadcast({'cmd':'remove', 'game':True, 'args' : [shot_player]})
+        return True
 
 
 
