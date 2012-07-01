@@ -148,6 +148,9 @@ Game.prototype.create_player = function(name, x, y) {
 
         speed : this.options.user.speed
     });
+
+    this.updateUserName(name);
+
     return this.players[name];
 }
 
@@ -206,6 +209,10 @@ Game.prototype.updateGameScore = function(score) {
     for (var i = 0; i < score.length; i++) {
         $('#score').append('<li><span>' + score[i][0] + '</span>: ' + score[i][1] + '</li>');
     }
+}
+
+Game.prototype.updateUserName = function(name) {
+    $('#name').html(name);
 }
 
 Game.prototype.score = function(score) {
