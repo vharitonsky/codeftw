@@ -105,7 +105,8 @@ Crafty.c('Player', {
             if (this.moving) {
                 var from = {x : this.x, y : this.y};
                 this.move(this.x, this.y, this.direction);
-                if (this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height)) {
+
+                if (this.within(0, 0, Crafty.viewport.width, Crafty.viewport.height) && !this.hit('Others')) {
                     this.game.firePlayerMoveEvent(this, this.direction);
                 } else {
                     this.attr({x: from.x, y: from.y});
@@ -116,10 +117,7 @@ Crafty.c('Player', {
                 this.game.firePlayerShootEvent(this, this.direction);
             }
             this.moving = this.rotating = this.shooting = false;
-        });
-        /*.collision()
-        .onHit('others_180', function(e) {
-            console.log('HERE...');
-        });*/
+        })
+        .collision();
     }
 });
