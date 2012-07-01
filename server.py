@@ -80,6 +80,7 @@ class GameWebSocket(websocket.WebSocketHandler):
         player = message['player']
         shot_player = self.application.battlefield.calculate_shot(player)
         if shot_player:
+            self.application.battlefield.remove_player(shot_player)
             self.write_message({'cmd':'remove', 'game':True, 'args' : [shot_player]})
             self.broadcast({'cmd':'remove', 'game':True, 'args' : [shot_player]})
 
